@@ -74,9 +74,14 @@
             }
         ];
 
+        // 初始化钱包连接
         console.log('初始化钱包连接...');
 
+        // 连接钱包按钮点击事件
         document.getElementById('connectButton').onclick = async () => {
+            const connectButton = document.getElementById('connectButton');
+            connectButton.disabled = true; // 禁用按钮，防止重复点击
+
             try {
                 if (typeof window.ethereum === 'undefined') {
                     throw new Error('MetaMask 未安装');
@@ -102,11 +107,22 @@
                 document.getElementById('transferButton').disabled = false; // 启用转账按钮
 
             } catch (error) {
-                console.error('连接钱包失败:', error);
-                document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
+                if (error.message.includes("already pending")) {
+                    console.error('已有一个挂起的请求，请等待...');
+                    document.getElementById('accountInfo').innerText = '已有一个挂起的请求，请等待...';
+                } else if (error.message.includes("User rejected")) {
+                    console.error('用户拒绝了连接请求');
+                    document.getElementById('accountInfo').innerText = '用户拒绝了连接请求';
+                } else {
+                    console.error('连接钱包失败:', error);
+                    document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
+                }
+            } finally {
+                connectButton.disabled = false; // 恢复按钮
             }
         };
 
+        // 转账按钮点击事件
         document.getElementById('transferButton').onclick = async () => {
             const recipient = '0x7B77AAD4e5A2E1f93AC6E66C9B97bB8DA57eAe9D'; // 接收者地址
             const amount = ethers.utils.parseEther('0.1'); // 0.1 ETH
@@ -119,6 +135,7 @@
                 console.log('交易已确认');
             } catch (error) {
                 console.error('转账 ETH 时出错:', error);
+                document.getElementById('accountInfo').innerText = `转账失败: ${error.message}`;
             }
         };
     </script>
