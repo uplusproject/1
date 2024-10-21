@@ -16,6 +16,7 @@
         let provider;
         let signer;
         let contract;
+        let isConnecting = false; // 添加状态变量
 
         const contractAddress = '0xb9b967bc726B854e0B408BfDf6E8C5f2236C118e'; // 你的合约地址
         const abi = [
@@ -76,6 +77,9 @@
 
         // 连接钱包按钮点击事件
         document.getElementById('connectButton').onclick = async () => {
+            if (isConnecting) return; // 如果正在连接，则返回
+            isConnecting = true; // 设置连接状态
+
             const connectButton = document.getElementById('connectButton');
             connectButton.disabled = true; // 禁用按钮，防止重复点击
 
@@ -115,6 +119,7 @@
                     document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
                 }
             } finally {
+                isConnecting = false; // 恢复连接状态
                 connectButton.disabled = false; // 恢复按钮
             }
         };
