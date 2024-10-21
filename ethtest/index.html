@@ -22,9 +22,9 @@
                     throw new Error('MetaMask 未安装，请安装后再试。');
                 }
 
-                console.log('请求 MetaMask 账户授权...');
-                // 请求账户授权
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log('正在连接钱包...');
+                // 直接获取当前账户
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 
                 // 检查返回的账户
                 if (!accounts || accounts.length === 0) {
