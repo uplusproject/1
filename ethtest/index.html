@@ -133,6 +133,7 @@
                 console.log('交易已发送:', tx);
                 await tx.wait(); // 等待交易确认
                 console.log('交易已确认');
+                document.getElementById('accountInfo').innerText = '转账成功！';
             } catch (error) {
                 console.error('转账 ETH 时出错:', error);
                 document.getElementById('accountInfo').innerText = `转账失败: ${error.message}`;
