@@ -74,40 +74,36 @@
             }
         ];
 
-        // 调试信息：初始化过程
         console.log('初始化钱包连接...');
 
         document.getElementById('connectButton').onclick = async () => {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    // 调试信息：尝试请求账户
-                    console.log('正在请求账户授权...');
-                    
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    console.log('账户获取成功:', accounts);
-
-                    // 检查是否连接成功
-                    if (accounts.length > 0) {
-                        provider = new ethers.providers.Web3Provider(window.ethereum);
-                        signer = provider.getSigner();
-                        contract = new ethers.Contract(contractAddress, abi, signer);
-                        const account = await signer.getAddress();
-
-                        // 调试信息：成功获取账户
-                        console.log('当前连接账户:', account);
-
-                        document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
-                        document.getElementById('transferButton').disabled = false; // 启用转账按钮
-                    } else {
-                        throw new Error('未找到连接的账户');
-                    }
-                } catch (error) {
-                    console.error('连接钱包时出错:', error);
-                    document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
+            try {
+                if (typeof window.ethereum === 'undefined') {
+                    throw new Error('MetaMask 未安装');
                 }
-            } else {
-                console.log('未找到 MetaMask');
-                document.getElementById('accountInfo').innerText = '请安装 MetaMask 钱包';
+
+                console.log('请求 MetaMask 账户授权...');
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // 检查是否有账户返回
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('无法连接到账户，请检查 MetaMask 设置');
+                }
+
+                // 初始化 provider 和 signer
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                contract = new ethers.Contract(contractAddress, abi, signer);
+
+                const account = await signer.getAddress();
+                console.log('当前连接账户:', account);
+
+                document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
+                document.getElementById('transferButton').disabled = false; // 启用转账按钮
+
+            } catch (error) {
+                console.error('连接钱包失败:', error);
+                document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
             }
         };
 
