@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETH Transfer</title>
+    <title>ETH 转账</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.5.0.umd.min.js"></script>
 </head>
 <body>
-    <h1>Transfer ETH</h1>
-    <button id="connectButton">Connect Wallet</button>
-    <button id="transferButton" disabled>Transfer 0.1 ETH</button>
+    <h1>转账 ETH</h1>
+    <button id="connectButton">连接钱包</button>
+    <button id="transferButton" disabled>转账 0.1 ETH</button>
 
     <script>
         let provider;
@@ -82,12 +82,12 @@
                     signer = provider.getSigner();
                     contract = new ethers.Contract(contractAddress, abi, signer);
                     document.getElementById('transferButton').disabled = false; // 启用转账按钮
-                    console.log('Wallet connected');
+                    console.log('钱包已连接');
                 } catch (error) {
-                    console.error('Error connecting wallet:', error);
+                    console.error('连接钱包时出错:', error);
                 }
             } else {
-                console.log('MetaMask not found');
+                console.log('未找到 MetaMask');
             }
         };
 
@@ -97,11 +97,11 @@
 
             try {
                 const tx = await contract.transferETH(recipient, amount);
-                console.log('Transaction sent:', tx);
+                console.log('交易已发送:', tx);
                 await tx.wait(); // 等待交易确认
-                console.log('Transaction confirmed');
+                console.log('交易已确认');
             } catch (error) {
-                console.error('Error transferring ETH:', error);
+                console.error('转账 ETH 时出错:', error);
             }
         };
     </script>
