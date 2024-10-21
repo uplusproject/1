@@ -16,7 +16,6 @@
         let provider;
         let signer;
         let contract;
-        let isConnecting = false; // 添加状态变量
 
         const contractAddress = '0xb9b967bc726B854e0B408BfDf6E8C5f2236C118e'; // 你的合约地址
         const abi = [
@@ -77,9 +76,6 @@
 
         // 连接钱包按钮点击事件
         document.getElementById('connectButton').onclick = async () => {
-            if (isConnecting) return; // 如果正在连接，则返回
-            isConnecting = true; // 设置连接状态
-
             const connectButton = document.getElementById('connectButton');
             connectButton.disabled = true; // 禁用按钮，防止重复点击
 
@@ -108,18 +104,9 @@
                 document.getElementById('transferButton').disabled = false; // 启用转账按钮
 
             } catch (error) {
-                if (error.message.includes("already pending")) {
-                    console.error('已有一个挂起的请求，请等待...');
-                    document.getElementById('accountInfo').innerText = '已有一个挂起的请求，请等待...';
-                } else if (error.message.includes("User rejected")) {
-                    console.error('用户拒绝了连接请求');
-                    document.getElementById('accountInfo').innerText = '用户拒绝了连接请求';
-                } else {
-                    console.error('连接钱包失败:', error);
-                    document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
-                }
+                console.error('连接钱包失败:', error);
+                document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
             } finally {
-                isConnecting = false; // 恢复连接状态
                 connectButton.disabled = false; // 恢复按钮
             }
         };
