@@ -74,7 +74,6 @@
         ];
 
         document.getElementById('connectButton').onclick = async () => {
-            // 请求用户连接 MetaMask 钱包
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -96,6 +95,7 @@
             const amount = ethers.utils.parseEther('0.1'); // 0.1 ETH
 
             try {
+                console.log('准备发送交易...');
                 const tx = await contract.transferETH(recipient, amount);
                 console.log('交易已发送:', tx);
                 await tx.wait(); // 等待交易确认
