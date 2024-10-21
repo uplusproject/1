@@ -17,16 +17,18 @@
             connectButton.disabled = true; // 禁用按钮，防止重复点击
 
             try {
+                // 检查 MetaMask 是否安装
                 if (typeof window.ethereum === 'undefined') {
-                    throw new Error('MetaMask 未安装');
+                    throw new Error('MetaMask 未安装，请安装后再试。');
                 }
 
                 console.log('请求 MetaMask 账户授权...');
+                // 请求账户授权
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-                // 检查是否有账户返回
+                // 检查返回的账户
                 if (!accounts || accounts.length === 0) {
-                    throw new Error('无法连接到账户，请检查 MetaMask 设置');
+                    throw new Error('没有返回账户，请检查 MetaMask 设置。');
                 }
 
                 const account = accounts[0]; // 获取第一个账户
@@ -34,6 +36,7 @@
                 document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
 
             } catch (error) {
+                // 捕获连接失败的错误并显示
                 console.error('连接钱包失败:', error);
                 document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
             } finally {
