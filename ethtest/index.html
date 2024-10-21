@@ -1,50 +1,80 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>连接钱包</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.5.0.umd.min.js"></script>
+  <meta charset="utf-8">
+  <title>Pepe Unchained | Pepe’s Own Layer 2 Blockchain</title>
+  <meta name="description" content="Pepe Unchained is the future of meme coins – a Layer 2 blockchain built for speed, security, and low fees. The $PEPU token powers the entire ecosystem.">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="keywords" content="Pepe Unchained, PEPE, Unchained, BLOCKCHAIN,, $PEPU Token, Token, Presale, Staking">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" type="image/x-icon" href="./assets/images/svg-icons/token.svg">
+  <link rel="canonical" href="https://pepeunchained.com">
+  <link rel="stylesheet" href="styles.css"> <!-- 引入样式表 -->
 </head>
 <body>
-    <h1>连接钱包</h1>
-    <button id="connectButton">连接钱包</button>
-    <div id="accountInfo" style="margin-top: 20px;"></div>
+  <div class="container">
+      <h1>连接到MetaMask</h1>
+      <button id="connectButton">连接钱包</button>
+      <p id="account"></p>
+  </div>
 
-    <script>
-        document.getElementById('connectButton').onclick = async () => {
-            const connectButton = document.getElementById('connectButton');
-            connectButton.disabled = true; // 禁用按钮，防止重复点击
-
+  <script>
+    document.getElementById('connectButton').addEventListener('click', async () => {
+        // 检查MetaMask是否安装
+        if (typeof window.ethereum !== 'undefined') {
             try {
-                // 检查 MetaMask 是否安装
-                if (typeof window.ethereum === 'undefined') {
-                    throw new Error('MetaMask 未安装，请安装后再试。');
-                }
-
-                console.log('正在连接钱包...');
-                // 直接获取当前账户
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-
+                // 请求连接MetaMask钱包
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 // 检查返回的账户
-                console.log('获取到的账户:', accounts); // 输出账户列表到控制台
-
-                if (!accounts || accounts.length === 0) {
-                    throw new Error('没有返回账户，请检查 MetaMask 设置。');
+                if (accounts.length > 0) {
+                    document.getElementById('account').innerText = `连接成功：${accounts[0]}`;
+                } else {
+                    throw new Error("没有返回账户，请检查MetaMask设置。");
                 }
-
-                const account = accounts[0]; // 获取第一个账户
-                console.log('当前连接账户:', account);
-                document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
-
             } catch (error) {
-                // 捕获连接失败的错误并显示
-                console.error('连接钱包失败:', error);
-                document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
-            } finally {
-                connectButton.disabled = false; // 恢复按钮
+                console.error("连接失败:", error);
+                document.getElementById('account').innerText = `连接失败: ${error.message}`;
             }
-        };
-    </script>
+        } else {
+            alert("请安装MetaMask扩展程序!");
+        }
+    });
+  </script>
+  
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+  </style>
 </body>
 </html>
