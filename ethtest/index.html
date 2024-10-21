@@ -10,6 +10,7 @@
     <h1>转账 ETH</h1>
     <button id="connectButton">连接钱包</button>
     <button id="transferButton" disabled>转账 0.1 ETH</button>
+    <div id="accountInfo" style="margin-top: 20px;"></div>
 
     <script>
         let provider;
@@ -76,17 +77,24 @@
         document.getElementById('connectButton').onclick = async () => {
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
                     contract = new ethers.Contract(contractAddress, abi, signer);
+
+                    // 获取连接的账户地址并显示
+                    const account = await signer.getAddress();
+                    document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
+                    
                     document.getElementById('transferButton').disabled = false; // 启用转账按钮
-                    console.log('钱包已连接');
+                    console.log('钱包已连接:', account);
                 } catch (error) {
                     console.error('连接钱包时出错:', error);
+                    document.getElementById('accountInfo').innerText = '连接钱包失败，请检查控制台';
                 }
             } else {
                 console.log('未找到 MetaMask');
+                document.getElementById('accountInfo').innerText = '请安装 MetaMask 钱包';
             }
         };
 
