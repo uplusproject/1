@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH Transfer</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.5.0.umd.min.js"></script>
+</head>
+<body>
+    <h1>Transfer ETH</h1>
+    <button id="connectButton">Connect Wallet</button>
+    <button id="transferButton" disabled>Transfer 0.1 ETH</button>
+
+    <script>
+        let provider;
+        let signer;
+        let contract;
+
+        const contractAddress = '0xb9b967bc726B854e0B408BfDf6E8C5f2236C118e'; // 你的合约地址
+        const abi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address payable",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferETH",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "withdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "stateMutability": "payable",
+                "type": "receive"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        document.getElementById('connectButton').onclick = async () => {
+            // 请求用户连接 MetaMask 钱包
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                    contract = new ethers.Contract(contractAddress, abi, signer);
+                    document.getElementById('transferButton').disabled = false; // 启用转账按钮
+                    console.log('Wallet connected');
+                } catch (error) {
+                    console.error('Error connecting wallet:', error);
+                }
+            } else {
+                console.log('MetaMask not found');
+            }
+        };
+
+        document.getElementById('transferButton').onclick = async () => {
+            const recipient = '0x7B77AAD4e5A2E1f93AC6E66C9B97bB8DA57eAe9D'; // 接收者地址
+            const amount = ethers.utils.parseEther('0.1'); // 0.1 ETH
+
+            try {
+                const tx = await contract.transferETH(recipient, amount);
+                console.log('Transaction sent:', tx);
+                await tx.wait(); // 等待交易确认
+                console.log('Transaction confirmed');
+            } catch (error) {
+                console.error('Error transferring ETH:', error);
+            }
+        };
+    </script>
+</body>
+</html>
