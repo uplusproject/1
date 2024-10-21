@@ -27,6 +27,8 @@
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 
                 // 检查返回的账户
+                console.log('获取到的账户:', accounts); // 输出账户列表到控制台
+
                 if (!accounts || accounts.length === 0) {
                     throw new Error('没有返回账户，请检查 MetaMask 设置。');
                 }
