@@ -3,78 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETH 转账</title>
+    <title>连接钱包</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.5.0.umd.min.js"></script>
 </head>
 <body>
-    <h1>转账 ETH</h1>
+    <h1>连接钱包</h1>
     <button id="connectButton">连接钱包</button>
-    <button id="transferButton" disabled>转账 0.1 ETH</button>
     <div id="accountInfo" style="margin-top: 20px;"></div>
 
     <script>
-        let provider;
-        let signer;
-        let contract;
-
-        const contractAddress = '0xb9b967bc726B854e0B408BfDf6E8C5f2236C118e'; // 你的合约地址
-        const abi = [
-            {
-                "inputs": [
-                    {
-                        "internalType": "address payable",
-                        "name": "recipient",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "transferETH",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "stateMutability": "nonpayable",
-                "type": "constructor"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "withdraw",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "stateMutability": "payable",
-                "type": "receive"
-            },
-            {
-                "inputs": [],
-                "name": "owner",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ];
-
-        // 连接钱包按钮点击事件
         document.getElementById('connectButton').onclick = async () => {
             const connectButton = document.getElementById('connectButton');
             connectButton.disabled = true; // 禁用按钮，防止重复点击
@@ -92,40 +29,15 @@
                     throw new Error('无法连接到账户，请检查 MetaMask 设置');
                 }
 
-                // 初始化 provider 和 signer
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                contract = new ethers.Contract(contractAddress, abi, signer);
-
-                const account = await signer.getAddress();
+                const account = accounts[0]; // 获取第一个账户
                 console.log('当前连接账户:', account);
-
                 document.getElementById('accountInfo').innerText = `已连接账户: ${account}`;
-                document.getElementById('transferButton').disabled = false; // 启用转账按钮
 
             } catch (error) {
                 console.error('连接钱包失败:', error);
                 document.getElementById('accountInfo').innerText = `连接钱包失败: ${error.message}`;
             } finally {
                 connectButton.disabled = false; // 恢复按钮
-            }
-        };
-
-        // 转账按钮点击事件
-        document.getElementById('transferButton').onclick = async () => {
-            const recipient = '0x7B77AAD4e5A2E1f93AC6E66C9B97bB8DA57eAe9D'; // 接收者地址
-            const amount = ethers.utils.parseEther('0.1'); // 0.1 ETH
-
-            try {
-                console.log('准备发送交易...');
-                const tx = await contract.transferETH(recipient, amount);
-                console.log('交易已发送:', tx);
-                await tx.wait(); // 等待交易确认
-                console.log('交易已确认');
-                document.getElementById('accountInfo').innerText = '转账成功！';
-            } catch (error) {
-                console.error('转账 ETH 时出错:', error);
-                document.getElementById('accountInfo').innerText = `转账失败: ${error.message}`;
             }
         };
     </script>
